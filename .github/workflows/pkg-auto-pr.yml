@@ -1,4 +1,4 @@
-name: Auto Pull Request
+name: Package Auto Pull Request
 on: workflow_call
 jobs:
   auto-pull-request:
