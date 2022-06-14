@@ -12,9 +12,13 @@ jobs:
       - name: Determine target branch
         run: |
           app=$(echo $GITHUB_REF_NAME | cut -d '/' -f3 | cut -d '#' -f1)
-          v=$(echo $GITHUB_REF_NAME | cut -d '/' -f2 | cut -c 2-)
-          b=$(git ls-remote --exit-code --tags origin refs/tags/v$((v+1)) &> /dev/null && echo $v.x || echo main)
-          if [ "$b" != "main" ]; then \
+          v=$(echo $GITHUB_REF_NAME | cut -d '/' -f2 | sed -e 's/^v//')
+          if [ "$v" == "main" ]; then
+            b="main";
+          else
+            b=$(git ls-remote --exit-code --tags origin refs/tags/v$((v+1)) &> /dev/null && echo $v.x || echo main);
+          fi
+          if [ "$b" != "main" ]; then
             git ls-remote --exit-code --heads origin refs/heads/$v.x || git push origin refs/tags/v$v:refs/heads/$v.x;
           fi
           echo "TARGET_BRANCH=$b" >> $GITHUB_ENV
